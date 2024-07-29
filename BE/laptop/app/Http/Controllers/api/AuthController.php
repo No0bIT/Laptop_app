@@ -28,6 +28,7 @@ class AuthController extends Controller
             return  response()->json($user);    
         }
         catch(Exception $e){
+            // abort(404, $e->getMessage());
             return $e->getMessage();
         }
     }
