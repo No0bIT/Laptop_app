@@ -2,6 +2,8 @@
 
 use App\Http\Controllers\api\AuthController;
 use App\Http\Controllers\api\EmailVerificationController;
+use App\Http\Controllers\api\LaptopController;
+use App\Http\Controllers\api\ProductController;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
 
@@ -30,3 +32,5 @@ Route::prefix('auth')->group(function(){
 Route::get('/email/verify/{id}/{hash}', [EmailVerificationController::class, 'verify'])
     ->middleware(['signed', 'throttle:6,1'])
     ->name('verification.verify');
+
+Route::get('laptop',[LaptopController::class, 'index']);

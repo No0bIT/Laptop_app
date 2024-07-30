@@ -15,7 +15,7 @@ return new class extends Migration
             $table->id();
             $table->string('name');
             $table->integer('price');
-            $table->integer('dale_price');
+            $table->integer('sale_price');
             $table->integer('quantity');
             $table->string('model');
             $table->decimal('width');
