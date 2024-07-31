@@ -1,6 +1,8 @@
 import React from 'react';
 import './Header.css';
 
+
+
 const Header = () => {
   return (
     <header className="header">
@@ -10,8 +12,8 @@ const Header = () => {
       <nav className="nav" style={{marginRight:'50px'}}>
         <ul>
           <li><a href="/">Trang Chủ</a></li>
-          <li><a href="#about">Giới Thiệu</a></li>
-          <li><a href="#services">Dịch Vụ</a></li>
+          <li><a href="#about">Giỏ hàng</a></li>
+          <li><a href="login">Đăng nhập</a></li>
           <li><a href="#contact">Liên Hệ</a></li>
         </ul>
       </nav>
