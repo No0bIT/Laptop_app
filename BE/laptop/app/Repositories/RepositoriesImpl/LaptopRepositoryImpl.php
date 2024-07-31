@@ -14,9 +14,9 @@ class LaptopRepositoryImpl implements LaptopRepository{
     public function getAll(){
         $laptops = Laptop::select('laptops.*')
                     ->selectSub(function ($query) {
-                        $query->from('feedbacks')
+                        $query->from('feedback')
                             ->selectRaw('coalesce(avg(star), 5)')
-                            ->whereColumn('feedbacks.laptop_id', 'laptops.id');
+                            ->whereColumn('feedback.laptop_id', 'laptops.id');
                     }, 'average_rating')
                     ->selectSub(function ($query) {
                         $query->from('order_details')
@@ -31,9 +31,9 @@ class LaptopRepositoryImpl implements LaptopRepository{
         $laptops = Laptop::filter($filters)
                     ->select('laptops.*')
                     ->selectSub(function ($query) {
-                        $query->from('feedbacks')
+                        $query->from('feedback')
                             ->selectRaw('coalesce(avg(star), 5)')
-                            ->whereColumn('feedbacks.laptop_id', 'laptops.id');
+                            ->whereColumn('feedback.laptop_id', 'laptops.id');
                     }, 'average_rating')
                     ->selectSub(function ($query) {
                         $query->from('order_details')
@@ -67,4 +67,22 @@ class LaptopRepositoryImpl implements LaptopRepository{
 
         return $data;
     }
+
+    public function store($id){
+        $laptop =  Laptop::with(['feedbacks.user', 'brand','categories','images','videos'])
+                    ->select('laptops.*')
+                    ->selectSub(function ($query) {
+                        $query->from('feedback')
+                            ->selectRaw('coalesce(avg(star), 5)')
+                            ->whereColumn('feedback.laptop_id', 'laptops.id');
+                    }, 'average_rating')
+                    ->selectSub(function ($query) {
+                        $query->from('order_details')
+                            ->selectRaw('coalesce(sum(quantity), 0)')
+                            ->whereColumn('order_details.laptop_id', 'laptops.id');
+                    }, 'total_sold')
+                    ->find($id);
+        return $laptop;
+    }
+
 }

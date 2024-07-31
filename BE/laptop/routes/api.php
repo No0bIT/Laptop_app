@@ -34,4 +34,7 @@ Route::get('/email/verify/{id}/{hash}', [EmailVerificationController::class, 've
     ->name('verification.verify');
 
 Route::get('laptop',[LaptopController::class, 'index']);
-Route::get('laptop/filter',[LaptopController::class, 'getfilter']);
+Route::get('laptop/{id}',[LaptopController::class,'store']);
+
+Route::get('filter',[LaptopController::class, 'getFilter']);
+

@@ -23,6 +23,7 @@ function Home() {
     const [rams, setRams] = useState([]);
     const [cpus, setCpus] = useState([]);
     const [storages, setStorages] = useState([]);
+    const [isLoading, setIsLoading] = useState(true);
     // const [systems, setSystems] = useState([]);
 
 
@@ -123,16 +124,17 @@ function Home() {
     useEffect(() => {
         fetchDataFilter();
     }, []);
-    console.log(filters);
+
 
     const fetchDataFilter= async () => {
         try {
-            const response = await axios.get(`http://localhost:8000/api/laptop/filter`);
+            const response = await axios.get(`http://localhost:8000/api/filter`);
             // setDataFillters(response.data);
             setDataCpus(response.data.cpus); 
             setDataRams(response.data.rams);
             setDataStorages(response.data.storages);
             // console.log(response.data);
+
         } catch (error) {
             console.error("Error fetching dataFillters:", error);
         }
@@ -147,11 +149,10 @@ function Home() {
                 filters:filters
             }
         });
-        console.log(1);
         setLaptops(response.data.data);
         setTotalPages(response.data.last_page);
         } catch (error) {
-        console.error("Error fetching laptops:", error);
+            console.error("Error fetching laptops:", error);
         }
     };
     const handlePageChange = (page) => {

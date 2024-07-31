@@ -46,9 +46,19 @@ class LaptopController extends Controller
         }
     }
 
-    public function getfilter(){
+    public function getFilter(){
+        
         try{
             return response()->json($this->laptopRepository->dataFilter()); 
+        }
+        catch(Exception $e){
+            return $e->getMessage();
+        }
+    }
+
+    public function store(Request $request){
+        try{
+           return $this->laptopRepository->store($request->id);
         }
         catch(Exception $e){
             return $e->getMessage();
