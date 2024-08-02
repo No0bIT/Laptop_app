@@ -20,26 +20,20 @@ class LaptopController extends Controller
         try{
             $filters = $request->filters;
             $name = $request->strSearch;
-            if($name == ''|| $name==null){
 
-            }
-            else{
-                
+            if(!empty($name)) {
                 $filters['name'] = $name;
             }
             
             if($filters!=null &&  count($filters) > 0){
                 return $this->laptopRepository->getFilters($filters);
             }
-            else{
+            
                 //     $data = Cache::remember('laptops', 1440, function () {
                 //        return $this->laptopRepository->getAll();
                 //    });
                 //     return $data;
-                return $this->laptopRepository->getAll();
-            }
-        
-            
+            return $this->laptopRepository->getAll();           
         }
         catch(Exception $e){
             return $e->getMessage();
@@ -59,6 +53,17 @@ class LaptopController extends Controller
     public function store(Request $request){
         try{
            return $this->laptopRepository->store($request->id);
+        }
+        catch(Exception $e){
+            return $e->getMessage();
+        }
+    }
+
+
+    public function getLaptopCart(Request $request){
+        try{
+            $carts=$request->carts;
+            return $this->laptopRepository->getLaptopCart($carts);
         }
         catch(Exception $e){
             return $e->getMessage();

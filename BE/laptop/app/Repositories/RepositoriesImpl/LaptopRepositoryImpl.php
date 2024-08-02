@@ -11,7 +11,9 @@ class LaptopRepositoryImpl implements LaptopRepository{
     // public function __construct(){
     //     $this->laptop =  new Laptop();
     // }
-    public function getAll(){
+    public function getAll($filters=[]){
+
+
         $laptops = Laptop::select('laptops.*')
                     ->selectSub(function ($query) {
                         $query->from('feedback')
@@ -22,9 +24,11 @@ class LaptopRepositoryImpl implements LaptopRepository{
                         $query->from('order_details')
                             ->selectRaw('coalesce(sum(quantity), 0)')
                             ->whereColumn('order_details.laptop_id', 'laptops.id');
-                    }, 'total_sold')
-                    ->paginate(20);
-        return $laptops;
+                    }, 'total_sold');
+                    if(count($filters)>0){
+                        $laptops=$laptops->filter($filters);
+                    }
+        return $laptops->paginate(20);
     }
     
     public function getFilters($filters){
@@ -83,6 +87,13 @@ class LaptopRepositoryImpl implements LaptopRepository{
                     }, 'total_sold')
                     ->find($id);
         return $laptop;
+    }
+
+    public function getLaptopCart($carts){
+        $laptopIds =collect($carts)->pluck('id')->unique();
+        $laptops = Laptop::whereIn('id', $laptopIds)->get();
+
+        return $laptops;
     }
 
 }

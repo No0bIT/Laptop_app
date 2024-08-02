@@ -1,6 +1,6 @@
 import axios from "axios";
 import { useEffect, useState } from "react";
-import { useParams } from "react-router-dom";
+import { useNavigate, useParams } from "react-router-dom";
 import Header from "../../components/Header/Header";
 import Footer from "../../components/Footer/Footer";
 import "./ProductDetail.css"
@@ -11,7 +11,7 @@ import 'react-toastify/dist/ReactToastify.css';
 
 const ProductDetail = () => {
     const { id } = useParams();
-
+    const navigate = useNavigate();
 
     const [isLoading, setIsLoading] = useState(true);
     const [laptop, setLaptop] = useState(null);
@@ -23,7 +23,6 @@ const ProductDetail = () => {
     const [showAllcoment, setShowAllcoment] = useState(false);
 
     const handleClickArrowLeft = () => {
-
       if(imagesActive>0){
         setImgagesActive(pre=>pre-1);
       }
@@ -47,7 +46,15 @@ const ProductDetail = () => {
       }
     };
     const handleClickBuyNow = () => {
-      console.log(1);
+      const dataCarts = [
+        {
+          laptop: laptop,
+          quantity: quantity,
+          id:laptop.id
+        }
+      ];
+
+      navigate('/checkout', { state: { dataCarts: dataCarts } });
     };
     const handleClickAddToCart = () => {
       let carts = JSON.parse(localStorage.getItem('carts')) || [];
@@ -117,7 +124,7 @@ const ProductDetail = () => {
                     <div className="product-detail-view-slider-arrows arrow-left" onClick={()=>handleClickArrowLeft()}>◀</div>
                     <div style={{width:'500px', height:'100px', display:'flex',flexDirection:'row',justifyContent:'space-evenly'}}  
                     >
-                      { Array.from({ length: 5 }).map((_, i) => (
+                      { Array.from({ length: laptop.images.length <5?laptop.images.length:5 }).map((_, i) => (
                           <div 
                           className={` slide-shows-img btn ${imagesActive + i ==imageActive ?"slide-shows-active-img  ":''}` }
                             onClick={()=>handleClickSlideShowItem(imagesActive + i)}>
@@ -174,8 +181,7 @@ const ProductDetail = () => {
                     <div 
                       style={{width:'30px',height:'30px',backgroundColor:'rgb(170, 170, 173)', alignContent:'center',
                         textAlign:"center",fontSize:'20px', fontWeight:'600',color:'white',
-                        borderBottomRightRadius:'10px',borderTopRightRadius:'10px',border:'1px solid rgb(170, 170, 173)',
-                      
+                        borderBottomRightRadius:'10px',borderTopRightRadius:'10px',border:'1px solid rgb(170, 170, 173)',                      
                         }}
                         className={`btn incre`}
                         onClick={()=>handleClickIncreQuantity()}

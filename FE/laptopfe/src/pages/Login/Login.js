@@ -3,6 +3,8 @@ import React, { useState } from 'react';
 import axios from 'axios';
 import { useNavigate } from 'react-router-dom';
 import ReactNotification, { store } from 'react-notifications-component';
+import { ToastContainer, toast } from 'react-toastify';
+import 'react-toastify/dist/ReactToastify.css';
 
 import './Login.css'
 import Footer from '../../components/Footer/Footer';
@@ -25,7 +27,10 @@ function Login() {
       
       navigate('/'); // Điều hướng về trang home sau khi đăng nhập thành công
     } catch (error) {
-      alert('Login failed');
+      toast.error("Đăng nhập thất thất bại hãy kiểm tra lại tài khoản!", {
+        position: 'top-right', // Sử dụng chuỗi để xác định vị trí
+        autoClose: 3000
+      });
     }
   };
   const handleRegister = async () => {
@@ -34,7 +39,13 @@ function Login() {
       const response = await axios.post('http://localhost:8000/api/auth/register',
          { email, password, phone,name });
 
+
       setStatus(pre=>!pre);
+      toast.success("Tạo tài khoản thành công!", {
+        position: 'top-right', // Sử dụng chuỗi để xác định vị trí
+        autoClose: 3000
+      });
+
       // setName('');
       // setPhone('');
       // store.addNotification({
@@ -50,7 +61,10 @@ function Login() {
   
   
     } catch (error) {
-      alert('Register failed');
+      toast.error("Tạo tài khoản thất bại!", {
+        position: 'top-right', // Sử dụng chuỗi để xác định vị trí
+        autoClose: 3000
+      });
     }
   };
 
@@ -170,6 +184,7 @@ function Login() {
       <div style={{position:'relative', width:'100%', bottom:'0'}}>
           <Footer/>
         </div>
+      <ToastContainer/>
     </div>
   );
 }

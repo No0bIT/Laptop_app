@@ -19,6 +19,7 @@ return new class extends Migration
             $table->integer('sale_price');
             $table->integer('quantity');
             $table->string('model');
+            $table->string('main_image');
             $table->decimal('width');
             $table->decimal('height');
             $table->decimal('weight');

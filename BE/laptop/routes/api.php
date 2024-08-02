@@ -4,6 +4,7 @@ use App\Http\Controllers\api\AuthController;
 use App\Http\Controllers\api\EmailVerificationController;
 use App\Http\Controllers\api\LaptopController;
 use App\Http\Controllers\api\ProductController;
+use App\Http\Controllers\api\UserController;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
 
@@ -26,7 +27,6 @@ Route::prefix('auth')->group(function(){
     Route::post('login',[AuthController::class, 'login']);
     Route::get('email/getOTP',[AuthController::class, 'getOTP']);
     Route::get('email/verifyOTP',[AuthController::class, 'verifyOTP']);
-    
 });
 
 Route::get('/email/verify/{id}/{hash}', [EmailVerificationController::class, 'verify'])
@@ -36,5 +36,9 @@ Route::get('/email/verify/{id}/{hash}', [EmailVerificationController::class, 've
 Route::get('laptop',[LaptopController::class, 'index']);
 Route::get('laptop/{id}',[LaptopController::class,'store']);
 
+Route::get('cart',[LaptopController::class,'getLaptopCart']);
 Route::get('filter',[LaptopController::class, 'getFilter']);
+
+Route::get('user',[UserController::class, 'getUser'])->middleware('auth:api');
+
 

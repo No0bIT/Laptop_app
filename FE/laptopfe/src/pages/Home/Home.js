@@ -257,7 +257,7 @@ function Home() {
                                 <div className="home-laptop-img">
                                     <img
                                     style={{ width:'100%', height:'100%'}}
-                                     src="https://cdn.tgdd.vn/Products/Images/44/313333/lenovo-ideapad-slim-3-15iah8-i5-83er00evn-glr-2.jpg">                                       
+                                     src={laptop.main_image}>                                       
                                      </img>
                                 </div>
                                 <div className="home-laptop-profile">
