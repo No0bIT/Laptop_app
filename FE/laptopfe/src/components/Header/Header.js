@@ -38,12 +38,12 @@ const Header = () => {
         <ul>
           <li><a href="/">Trang Chủ</a></li>
           <li><a href="/cart">Giỏ hàng</a></li>
+          <li><a href="/myorder">Đơn Hàng</a></li>
           {token ?
            <li><a href="/profile">Tài Khoản Của Tôi</a></li>
            :<li><a href="/login">Đăng nhập</a></li>
           }
-          
-          
+                    
         </ul>
       </nav>
     </header>

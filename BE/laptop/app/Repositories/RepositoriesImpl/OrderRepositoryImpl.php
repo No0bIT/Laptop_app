@@ -12,6 +12,13 @@ use Illuminate\Support\Facades\DB;
 
 class OrderRepositoryImpl implements OrderRepository{
 
+    private $addressRepository;
+    
+    
+    public function __construct(){
+
+        $this->addressRepository  = new AddressRepositoryImpl();
+    }
 
     public function createOrder($data){
         DB::beginTransaction();
@@ -20,20 +27,7 @@ class OrderRepositoryImpl implements OrderRepository{
             $addressReq = $data['address'];
 
 
-            $address = Address::where('city', $addressReq['city'])
-                        ->where('district', $addressReq['district'])
-                        ->where('ward', $addressReq['ward'])
-                        ->where('detail',$addressReq['detail'])
-                        ->first();
-            if (!$address) {
-                $address = new Address();
-                $address->city = $addressReq['city'];
-                $address->district = $addressReq['district'];
-                $address->ward = $addressReq['ward'];
-                $address->detail =$addressReq['detail'];
-
-                $address->save();
-            }
+            $address = $this->addressRepository->createOrGetAddress( $addressReq);
 
 
             // lay ra user neu chua co thi tao user moi voi password = ""
@@ -47,9 +41,12 @@ class OrderRepositoryImpl implements OrderRepository{
                 $user->password = "";
                 $user->phone = $userRe['phone'];
                 $user->email = $userRe['phone']."@gmail.com";
-
-            }
-            $user->address_id = $address->id;
+                
+            }   
+            if(!empty($user->address_id)) {
+                $user->address_id = $address->id;
+            } 
+            // co the cho vao if o ben tren de user co roi thi khong can phia luu lai
             $user->save();
 
             
@@ -78,9 +75,7 @@ class OrderRepositoryImpl implements OrderRepository{
                 $laptop = Laptop::find($cart['id']);
                 $orderDetail->price_sold= $laptop->sale_price;
 
-                $amount += $orderDetail->price_sold;
-
-
+                $amount += $orderDetail->price_sold * $orderDetail->quantity;
                 $orderDetail->save();
             }
             $order->amount=$amount;

@@ -1,5 +1,6 @@
 <?php
 
+use App\Http\Controllers\api\AddressController;
 use App\Http\Controllers\api\AuthController;
 use App\Http\Controllers\api\EmailVerificationController;
 use App\Http\Controllers\api\LaptopController;
@@ -50,4 +51,6 @@ Route::get('/email/verify/{id}/{hash}', [EmailVerificationController::class, 've
 Route::middleware(['auth:api'])->group(function () {
     Route::get('user',[UserController::class, 'getUser']);
     Route::get('order/{status}',[OrderController::class, 'getOrder']);
+    Route::post('address/update/user',[AddressController::class, 'updateAddress']);
+    
 });

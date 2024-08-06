@@ -6,6 +6,7 @@ import 'react-toastify/dist/ReactToastify.css';
 import './MyOrder.css'
 import { useNavigate } from "react-router-dom";
 import axios from "axios";
+import { format, parseISO } from "date-fns";
 
 const MyOrder = () => {
     const [isLoading, setIsLoading] = useState(false);
@@ -85,7 +86,8 @@ const MyOrder = () => {
             navigate('/login');
         }    
     }
-console.log(orders);
+
+
 
     useEffect(() => {
         getData();
@@ -126,13 +128,26 @@ console.log(orders);
                         }
                         { orders.map((order,index) =>(
                             <div className={`myorder-order`}>
+                                { order.status == 'WAIT_CONFIRM'|| order.status=='CONFIRMED'?
+                                <div className="btn-buy-now"
+                                    style={{width:'150px', height:'40px', position:'absolute',top:'10px',right:'50px', zIndex:'1000'}}
+                                    // onClick={}
+                                >
+                                    Hủy Đơn
+                                    </ div >
+                                :""     
+                                }
+
                                 <div className="myorder-order-code">
-                                    Mã Đơn Hàng: {order.id}
+                                    Mã Đơn Hàng: {order.id}  
+                                           <span style={{marginLeft:'20px'}}>Thời gian đặt hàng:  {format(parseISO(order.created_at), 'yyyy-MM-dd HH:mm:ss')}</span>
                                 </div>
                                 <div className="myorder-order-product-container">
                                     { 
                                         order.order_details.map((orderDetail,index) =>(
-                                            <div className="myorder-order-product">
+                                            <div className="myorder-order-product btn"
+                                                onClick={()=>navigate(`/product/${orderDetail.laptop.id}`)}
+                                            >
                                                 <div className="myorder-order-product-img">
                                                     <img src={orderDetail.laptop.main_image} style={{width:'100%',height:'100%'}}></img>
                                                 </div>
@@ -140,14 +155,14 @@ console.log(orders);
                                                     <div
                                                     >{orderDetail.laptop.name}</div>
                                                     <div
-                                                    >x{orderDetail.quantity}</div>
+                                                    >x {orderDetail.quantity}</div>
                                                 </div>
                                                 <div className="myorder-order-product-price">
                                                     <div 
                                                     style={{color:'#888888', textDecoration:'line-through'}}
                                                     >{orderDetail.laptop.price} $</div>
                                                     <div
-                                                     style={{color:'#EE4D2D',fontSize:'16px', marginLeft:"5px"}}
+                                                     style={{color:'#EE4D2D',fontSize:'16px', marginLeft:"10px"}}
                                                     >{orderDetail.price_sold} $</div>
                                                 </div>
                                             </div>
@@ -155,7 +170,17 @@ console.log(orders);
                                     }
                                 </div>
                                 <div className="myorder-order-amount-container">
-                                    
+                                    <div  style={{ width:'700px', marginLeft:'40px'}}> 
+                                        Ghi chú: {order.note}
+                                    </div>
+                                    <div
+                                        style={{display: 'flex', flexDirection: 'row', width:'300px', alignItems: 'center'}}
+                                    >             
+                                        <div>Thành tiền:</div>
+                                        <div
+                                        style={{color:'#EE4D2D',fontSize:'18px', marginLeft:"10px", fontWeight:'600', }}
+                                        >{order.amount} $</div>
+                                    </ div >
                                 </div>
                             </div> 
                         ))}
