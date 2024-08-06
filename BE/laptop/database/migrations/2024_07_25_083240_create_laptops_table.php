@@ -35,6 +35,9 @@ return new class extends Migration
             $table->string('pin');
             $table->string('wifi');
             $table->timestamps();
+
+            $table->unsignedBigInteger('brand_id')->nullable();
+            $table->foreign('brand_id')->references('id')->on('brands');
         });
     }
 

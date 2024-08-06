@@ -15,7 +15,7 @@ return new class extends Migration
             $table->id();
             $table->integer('amount');
             $table->string('note');
-            //trang thai thanh toan: ho tro: 'PAID','PENDING','PARTIALLY_PAID' 
+            //trang thai thanh toan: ho tro: 'WAIT_CONFIRM','CONFIRMED',DELEVERY,'PENDING','PARTIALLY_PAID','PAID','CANCEL'
             $table->string('status');
             $table->unsignedBigInteger('address_id');
             $table->foreign('address_id')->references('id')->on('addresses');

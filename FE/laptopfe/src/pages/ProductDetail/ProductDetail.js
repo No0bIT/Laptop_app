@@ -91,7 +91,7 @@ const ProductDetail = () => {
     useEffect(() => {
         const fetchProduct = async () => {
           try {
-            const response = await axios.get(`http://localhost:8000/api/laptop/${id}`);
+            const response = await axios.get(`http://localhost:8000/api/auth/laptop/${id}`);
             setLaptop(response.data);
             setImgages(response.data.images);
             setFeedbacks(response.data.feedbacks);

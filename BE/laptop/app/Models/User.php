@@ -22,6 +22,7 @@ class User extends Authenticatable
         'email',
         'password',
         'phone',
+        'address_id'
     ];
 
     /**
@@ -32,6 +33,7 @@ class User extends Authenticatable
     protected $hidden = [
         'password',
         'remember_token',
+        'address_id'
     ];
 
     /**
@@ -56,6 +58,10 @@ class User extends Authenticatable
         return $this->hasMany(Order::class);
     }
 
+    public function address(){
+        return $this->belongsTo(Address::class);
+    }
+
 
     public function roles()
     {
@@ -65,5 +71,10 @@ class User extends Authenticatable
 
     public static function createUser($data){
         return User::create($data);
+    }
+
+    public function getUser($id){
+        $user = User::with(['address'])->find($id);
+        return $user;
     }
 }

@@ -3,6 +3,7 @@
 use App\Http\Controllers\api\AuthController;
 use App\Http\Controllers\api\EmailVerificationController;
 use App\Http\Controllers\api\LaptopController;
+use App\Http\Controllers\api\OrderController;
 use App\Http\Controllers\api\ProductController;
 use App\Http\Controllers\api\UserController;
 use Illuminate\Http\Request;
@@ -27,18 +28,26 @@ Route::prefix('auth')->group(function(){
     Route::post('login',[AuthController::class, 'login']);
     Route::get('email/getOTP',[AuthController::class, 'getOTP']);
     Route::get('email/verifyOTP',[AuthController::class, 'verifyOTP']);
+
+
+    Route::get('laptop',[LaptopController::class, 'index']);
+    Route::get('laptop/{id}',[LaptopController::class,'store']);
+
+    Route::get('cart',[LaptopController::class,'getLaptopCart']);
+    Route::get('filter',[LaptopController::class, 'getFilter']);
+    Route::post('order',[OrderController::class, 'createOrder']);
 });
 
 Route::get('/email/verify/{id}/{hash}', [EmailVerificationController::class, 'verify'])
     ->middleware(['signed', 'throttle:6,1'])
     ->name('verification.verify');
 
-Route::get('laptop',[LaptopController::class, 'index']);
-Route::get('laptop/{id}',[LaptopController::class,'store']);
-
-Route::get('cart',[LaptopController::class,'getLaptopCart']);
-Route::get('filter',[LaptopController::class, 'getFilter']);
-
-Route::get('user',[UserController::class, 'getUser'])->middleware('auth:api');
 
 
+
+
+
+Route::middleware(['auth:api'])->group(function () {
+    Route::get('user',[UserController::class, 'getUser']);
+    Route::get('order/{status}',[OrderController::class, 'getOrder']);
+});

@@ -11,17 +11,24 @@ import { useLocation, useNavigate } from 'react-router-dom';
 const Checkout = () => {
     const navigate = useNavigate();
     const location = useLocation();
-    const dataCarts = location.state?.dataCarts || [];
     const localAddress = JSON.parse(localStorage.getItem('localAddress')) || {
-        city:'',
-        district:'',
+        city: '',
+        district: '',
         ward:'',
-        detail:'',
+        detail: ''
     };
+    const [dataCarts,setDataCarts] = useState(location.state?.dataCarts || []) ;
+  
+    const token = localStorage.getItem('token') || null;
+
+
     
 
 
-    const token = localStorage.getItem('token') || null;
+    
+
+
+
    
 
     const [isLoading, setIsLoading] = useState(true);
@@ -31,25 +38,89 @@ const Checkout = () => {
 
     const [phone, setPhone] = useState('');
     const [name, setName] = useState('');
+    // address
+    const [city, setCity] = useState('');
+    const [district, setDistrict] = useState('');
+    const [ward, setWard] = useState('');
+    const [detail, setDetail] = useState('');
 
-    const [address, setAddress] = useState(
-        {
-            city:'',
-            district:'',
-            ward:'',
-            detail:'',
-        }
-    );
-    const [city, setCity] = useState();
-    const [district, setDistrict] = useState();
-    const [ward, setWard] = useState();
-    const [detail, setDetail] = useState();
+
     const [vouchers, setVouchers] = useState([]);
     const [note, setNote] = useState('');
+    const [isSubmitting, setIsSubmitting] = useState(false);
 
 
-    const handleOnclickConfirmOrder = () => {
-              
+    const handleOnclickConfirmOrder = async () => {
+        setIsSubmitting(true);
+        try {
+            if(!(city==''||district==''||ward==''||detail=='',phone=='',name=='')){    
+                const response = await axios.post(`http://localhost:8000/api/auth/order`,{
+                    data:{
+                        address:{
+                            city: city,
+                            ward:ward,
+                            district:district,
+                            detail:detail
+                        },
+                        carts:dataCarts,
+                        user:{
+                            phone: phone,
+                            name: name
+                        },
+                        note: note,
+
+                    }
+                });
+
+
+                // setIsSubmitting(false);
+                if(response.data.status == 200){
+                    console.log(JSON.stringify(response.data.data));
+                    
+                    toast.success("succes", {
+                        position: 'top-right', // Sử dụng chuỗi để xác định vị trí
+                        autoClose: 3000
+                    });
+                    // xu li xoa san pham trong gio hang khi da dat hang
+                    const storedCarts = JSON.parse(localStorage.getItem('carts')) || [];
+                    let updatedStoredCarts = [...storedCarts];
+                    const filteredCarts = updatedStoredCarts.filter(storedCart => {
+                                const exists = dataCarts.some(dataCart => dataCart.id === storedCart.id);
+                                if (exists) {
+                                    // nếu cart trong dataCarts tồn tại trong storedCarts, xóa nó
+                                    return false;
+                                }
+                                return true;
+                            });
+                    localStorage.setItem('carts', JSON.stringify(filteredCarts));
+
+                    setTimeout(() => {
+                        setDataCarts([]);
+                        navigate("/myorder") 
+                        
+                    }, 1000);
+                }
+                else {
+                    toast.error(response.data.message, {
+                        position: 'top-right', // Sử dụng chuỗi để xác định vị trí
+                        autoClose: 3000
+                    });
+                }
+            }
+            else{
+                toast.warning("Thông tin và địa chỉ người nhận không được để trống! :(", {
+                    position: 'top-right', // Sử dụng chuỗi để xác định vị trí
+                    autoClose: 3000
+                });
+            }
+
+        } catch (error) {
+            toast.error("Server not serve", {
+                position: 'top-right', // Sử dụng chuỗi để xác định vị trí
+                autoClose: 3000
+            });
+        }
+        
     };
 
 
@@ -61,9 +132,8 @@ const Checkout = () => {
                 ward:ward,
                 detail:detail
               }
-          setAddress(newAddress);
-          localStorage.setItem('localAddress', JSON.stringify(newAddress));
-          setIsOnchangeAddress(false);
+            localStorage.setItem('localAddress', JSON.stringify(newAddress));
+            setIsOnchangeAddress(false);
         }
         else{
             toast.warning(`Không được để trống!`, {
@@ -78,7 +148,6 @@ const Checkout = () => {
             const newUser ={
                 phone: phone,
                 name:name,
-               
               }
         //   setUser(newUser);
           setIsOnchangeUser(false);
@@ -92,11 +161,10 @@ const Checkout = () => {
         
     };
     const getUser = async () => {
-        setAddress(localAddress);
         setCity(localAddress.city);
         setDistrict(localAddress.district);
         setWard(localAddress.ward);
-        setDetail(localAddress.detail);
+        setDetail(localAddress.detail)
         if(token){
             try {
                 const response = await axios.get('http://localhost:8000/api/user', {
@@ -106,6 +174,14 @@ const Checkout = () => {
                 });
                 setPhone(response.data.phone);
                 setName(response.data.name);
+                if(response.data.address !=null ){
+                    console.log(response.data.address);
+                    
+                    setCity(response.data.address.city);
+                    setDistrict(response.data.address.district);
+                    setWard(response.data.address.ward);
+                    setDetail(response.data.address.detail);
+                }
             } catch (error) {
                 console.error('Error fetching data:', error);
             }
@@ -116,6 +192,10 @@ const Checkout = () => {
     useEffect(()=>{
         getUser();
     },[]);
+
+    if(dataCarts.length == 0){
+        navigate('/')
+    }
 
     if (isLoading) {
         return <div>Loading...</div>; // Hiển thị thông báo loading
@@ -163,10 +243,10 @@ const Checkout = () => {
                             </div>
                             <div style={{display:'flex',flexDirection:'row' }}> 
                                 {
-                                    address.city==''||address.district==''||address.ward==''||address.detail==''
+                                    city==''||district==''||ward==''||detail==''
                                     ? '':
                                     <div style={{maxWidth:'700px',overflow:'hidden', textOverflow:'ellipsis',whiteSpace:'nowrap'}}>
-                                        {`${address.detail}, phường/xã ${address.ward}, quận/huyện  ${address.district}, ${address.city}`}
+                                        {`${detail}, phường/xã ${ward}, quận/huyện  ${district}, ${city}`}
                                     </div>
                                 }  
                             </div>
@@ -194,7 +274,7 @@ const Checkout = () => {
 
                     <div className='cart-item-container' style={{width:'1150px',minHeight:'100px'}}>
                         {dataCarts.map((cart,index)=>(
-                            <div className='cart-item'>
+                            <div className='cart-item' key={index}>
                                 <div className='product-container '>
                                         <div style={{width:'80px', height:"80px",marginLeft:'10px'}}>
                                             <img
@@ -295,12 +375,21 @@ const Checkout = () => {
                             </div>
                         </div>
                         <div className='checkout-body-bar-infomation' 
-                            style={{height:'50px', display:'flex', justifyContent:'center'}}>                         
+                            style={{height:'50px', display:'flex', justifyContent:'center'}}>   
+                            { isSubmitting 
+                            ?
+                            <div  className='btn-buy-now'  style={{width:'180px', marginLeft:'0', height:'40px',backgroundColor:'#F86E52'}}
+                                >
+                                    Đang Đặt Hàng ...
+                                </div>
+                            :
                             <div  className='btn-buy-now'  style={{width:'180px', marginLeft:'0', height:'40px'}}
                                 onClick={()=>handleOnclickConfirmOrder()}
-                            >
-                                Xác Nhận
-                            </div>
+                                >
+                                    Xác Nhận
+                                </div>
+                            }                      
+                           
                         </div>
                     </div>
                 </div>

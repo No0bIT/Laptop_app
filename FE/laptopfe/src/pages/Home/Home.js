@@ -27,22 +27,12 @@ function Home() {
     // const [systems, setSystems] = useState([]);
 
 
-    const handleClickAccepfillter = () => {
-        setStatusFilter(pre=>{
-            // neu pre dang la true se chuyen trang thai sang f 
-            if(pre){
-                setFilters([]);    
-            }
-            else{
-                setFilters({
-                    'ram' : rams,
-                    'cpu' : cpus,
-                    'storage':storages})
-                // fetchLaptops();
-            }
-            return !pre;
-        })
-    };
+    const handleKeyDownSearch = (event) => {
+        if (event.key === 'Enter') {
+          event.preventDefault();
+          handleClickSearch();
+        }
+      };
 
     const handleRamClick = (ram, e) => {
         e.stopPropagation();
@@ -50,20 +40,19 @@ function Home() {
             // Tạo mảng mới với ram được thêm hoặc loại bỏ
             const updatedRams = prevRams.includes(ram)
                 ? prevRams.filter(item => item !== ram) // Loại bỏ phần tử nếu đã có trong mảng
-                : [...prevRams, ram]; // Thêm phần tử vào mảng nếu chưa có
-    
+                : [...prevRams, ram]; // Thêm phần tử vào mảng nếu chưa có   
             // Cập nhật filters với giá trị mới của rams
-            if(statusFilter){
                 setFilters(prevFilters => ({
                     ...prevFilters, // Giữ lại các giá trị hiện tại của filters
                     ram: updatedRams // Cập nhật giá trị của rams
-                }));
-            }
-            
-    
+                }));      
             return updatedRams;
         });
+        
+        console.log(1);
+        
     };
+
     const handleCpuClick = (cpu, e) => {
         e.stopPropagation();
         setCpus(prevCpus => {
@@ -73,13 +62,10 @@ function Home() {
                 : [...prevCpus, cpu]; // Thêm phần tử vào mảng nếu chưa có
     
             // Cập nhật filters với giá trị mới của cpus
-            if(statusFilter){
                 setFilters(prevFilters => ({
                     ...prevFilters, // Giữ lại các giá trị hiện tại của filters
                     cpu: updatedCpus // Cập nhật giá trị của cpus
                 }));
-            }
-    
             return updatedCpus;
         });
     };
@@ -92,13 +78,10 @@ function Home() {
                 : [...prevStorages, storage]; // Thêm phần tử vào mảng nếu chưa có
     
             // Cập nhật filters với giá trị mới của storages
-            if(statusFilter){
                 setFilters(prevFilters => ({
                     ...prevFilters, // Giữ lại các giá trị hiện tại của filters
                     storage: updatedStorages // Cập nhật giá trị của storages
-                }));
-            }
-    
+                })); 
             return updatedStorages;
         });
     };
@@ -108,9 +91,9 @@ function Home() {
         setCpus([]);
         setStorages([]);
         setFilters([]);
+        setCurrentPage(1);
     }
     const handleClickSearch = () => {
-
         fetchLaptops();
     };
     const handleClickProduct = (id) => {
@@ -122,13 +105,17 @@ function Home() {
     }, [currentPage]);
 
     useEffect(() => {
+        fetchLaptops();
+    }, [filters]);
+
+    useEffect(() => {
         fetchDataFilter();
     }, []);
 
 
     const fetchDataFilter= async () => {
         try {
-            const response = await axios.get(`http://localhost:8000/api/filter`);
+            const response = await axios.get(`http://localhost:8000/api/auth/filter`);
             // setDataFillters(response.data);
             setDataCpus(response.data.cpus); 
             setDataRams(response.data.rams);
@@ -142,7 +129,7 @@ function Home() {
 
     const fetchLaptops = async (page) => {
         try {
-        const response = await axios.get(`http://localhost:8000/api/laptop?page=${page}`,
+        const response = await axios.get(`http://localhost:8000/api/auth/laptop?page=${page}`,
         {   
             params:{
                 strSearch:strSearch,
@@ -175,6 +162,7 @@ function Home() {
                                 type="text"
                                 value={strSearch}
                                 onChange={(e) => setStrSearch(e.target.value)}
+                                onKeyDown={(e)=>handleKeyDownSearch(e)}
                                 placeholder='Tìm kiếm ...'
                                 required
                             />
@@ -183,12 +171,7 @@ function Home() {
                         {/*  xu li cac bo loc o day    */}
                         <div className="home-filter-container">
                             
-                            <div className={`home-filter `}
-                                style={{backgroundColor: statusFilter ? '#F0CE17' : '#A8A8A8'}}
-                                onClick={handleClickAccepfillter}
-                                >Áp dụng bộ lọc
-                                
-                            </div>
+
                             <div className={`home-filter `}
                                 style={{backgroundColor: !(rams.length==0&&cpus.length==0&&storages.length==0) ? '#F0CE17' : '#A8A8A8' }}
                                 onClick={handleClickClearFilter}

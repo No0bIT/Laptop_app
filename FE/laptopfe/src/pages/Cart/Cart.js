@@ -121,7 +121,7 @@ const Cart = () => {
             const storedCarts = JSON.parse(localStorage.getItem('carts')) || [];
            
 
-            const response = await axios.get(`http://localhost:8000/api/cart`,{
+            const response = await axios.get(`http://localhost:8000/api/auth/cart`,{
                 params:{
                     carts: storedCarts,
                 }

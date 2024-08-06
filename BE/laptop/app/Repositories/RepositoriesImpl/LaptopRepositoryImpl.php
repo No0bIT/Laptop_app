@@ -25,9 +25,9 @@ class LaptopRepositoryImpl implements LaptopRepository{
                             ->selectRaw('coalesce(sum(quantity), 0)')
                             ->whereColumn('order_details.laptop_id', 'laptops.id');
                     }, 'total_sold');
-                    if(count($filters)>0){
-                        $laptops=$laptops->filter($filters);
-                    }
+        if(count($filters)>0){
+            $laptops=$laptops->filter($filters);
+        }
         return $laptops->paginate(20);
     }
     
