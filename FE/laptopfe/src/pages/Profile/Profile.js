@@ -14,7 +14,9 @@ const Profile = () => {
     const navigate = useNavigate();
 
     const [user, setUser] = useState();
-    const [address, setAddress] = useState();
+    const [address, setAddress] = useState({
+
+    });
 
     const [isEdit, setIsEdit] = useState(false);
 
@@ -22,7 +24,7 @@ const Profile = () => {
     // can xoa gi khi log out vao day xoa
     const handleLogout = ()=>{
         localStorage.removeItem('token');
-        navigate('/')
+        navigate('/login')
     }
 
 
@@ -87,6 +89,8 @@ const Profile = () => {
                 position: 'top-right', // Sử dụng chuỗi để xác định vị trí
                 autoClose: 3000
             });
+
+
         }
 
 
@@ -104,8 +108,9 @@ const Profile = () => {
 
                 if(response.status == 200){
                     setUser(response.data);
-                    setAddress(response.data.address);
-                   
+                    if(response.data.address){
+                        setAddress(response.data.address);
+                    }                 
                 }
                 else if(response.status ==500){
                     navigate('/login');
@@ -123,6 +128,7 @@ const Profile = () => {
                     position: 'top-right', // Sử dụng chuỗi để xác định vị trí
                     autoClose: 3000
                 });
+                navigate('/login')
             }
             setIsLoading(false);         
         }

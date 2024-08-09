@@ -1,5 +1,5 @@
 // src/pages/Login.js
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import axios from 'axios';
 import { useNavigate } from 'react-router-dom';
 import ReactNotification, { store } from 'react-notifications-component';
@@ -11,21 +11,44 @@ import Footer from '../../components/Footer/Footer';
 import Header from '../../components/Header/Header';
 
 function Login() {
+  const storedAccount = JSON.parse(localStorage.getItem('account')) || null;
   const [status, setStatus]=useState(true);
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const [phone, setPhone] = useState('');
   const [name, setName] = useState('');
+  // const [roles, setRoles] = useState('');
   const navigate = useNavigate();
 
   const handleLogin = async () => {
-    console.log(1);
+
     try {
       const response = await axios.post('http://localhost:8000/api/auth/login', { email, password });
       const token = response.data.data.token;
       localStorage.setItem('token', token);
+      localStorage.setItem('account', JSON.stringify({
+        email:email,
+        password:password
+      }));
+      const roles = response.data.data.roles;
+      const maxRole = roles.reduce((highestRole, currentRole) => {
+                                              return (currentRole.id < highestRole.id) ? currentRole : highestRole;
+                                          }, roles[0]);
+
       
-      navigate('/'); // Điều hướng về trang home sau khi đăng nhập thành công
+
+
+      if(maxRole.role_name =="ADMIN"){
+        navigate('/admin');
+      }
+      else if(maxRole.role_nam =="SELLER"){
+        navigate('/seller');
+      }
+      else{
+        navigate('/'); // Điều hướng về trang home sau khi đăng nhập thành công
+      }
+
+      
     } catch (error) {
       toast.error("Đăng nhập thất thất bại hãy kiểm tra lại tài khoản!", {
         position: 'top-right', // Sử dụng chuỗi để xác định vị trí
@@ -34,7 +57,6 @@ function Login() {
     }
   };
   const handleRegister = async () => {
-    console.log(1);
     try {
       const response = await axios.post('http://localhost:8000/api/auth/register',
          { email, password, phone,name });
@@ -45,7 +67,7 @@ function Login() {
         position: 'top-right', // Sử dụng chuỗi để xác định vị trí
         autoClose: 3000
       });
-
+      handleLogin();  
       // setName('');
       // setPhone('');
       // store.addNotification({
@@ -67,7 +89,12 @@ function Login() {
       });
     }
   };
-
+  useEffect(() => {
+    if(storedAccount){
+      setEmail(storedAccount.email);
+      setPassword(storedAccount.password);
+    }
+  },[]);
   return (
     <div className='fullScreen'>
       <div>

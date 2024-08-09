@@ -74,7 +74,7 @@ class User extends Authenticatable
     }
 
     public function getUser($id){
-        $user = User::with(['address'])->find($id);
+        $user = User::with(['address','roles'])->find($id);
         return $user;
     }
 }

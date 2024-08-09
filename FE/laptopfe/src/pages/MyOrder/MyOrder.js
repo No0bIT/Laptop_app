@@ -80,6 +80,7 @@ const MyOrder = () => {
                     position: 'top-right', // Sử dụng chuỗi để xác định vị trí
                     autoClose: 3000
                 });
+                navigate('/login')
             }
         }
         else{

@@ -1,6 +1,7 @@
 <?php
 namespace App\Repositories\RepositoriesImpl;
 
+use App\Exceptions\CustomQuantityException;
 use App\Models\Address;
 use App\Models\Laptop;
 use App\Models\Order;
@@ -73,9 +74,14 @@ class OrderRepositoryImpl implements OrderRepository{
                 $orderDetail->status= true;
 
                 $laptop = Laptop::find($cart['id']);
+                if($laptop->quantity <$cart['quantity'] ){
+                    throw  new CustomQuantityException("Over quantity limit");
+                }
+                $laptop->quantity -=  $cart['quantity'];
+                $amount += $orderDetail->price_sold * $orderDetail->quantity;
                 $orderDetail->price_sold= $laptop->sale_price;
 
-                $amount += $orderDetail->price_sold * $orderDetail->quantity;
+               
                 $orderDetail->save();
             }
             $order->amount=$amount;

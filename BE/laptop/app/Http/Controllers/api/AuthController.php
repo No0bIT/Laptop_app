@@ -48,7 +48,8 @@ class AuthController extends Controller
                 $token = $user->createToken('name')->accessToken;
                 $dataRes =  [
                     'data' =>[
-                        'token' => $token
+                        'token' => $token,
+                        'roles' => $user->roles
                     ]
                     
                 ];  

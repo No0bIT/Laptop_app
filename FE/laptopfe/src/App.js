@@ -8,6 +8,9 @@ import Cart from './pages/Cart/Cart';
 import Checkout from './pages/Checkout/Checkout';
 import MyOrder from './pages/MyOrder/MyOrder';
 import Profile from './pages/Profile/Profile';
+import HomeAdmin from './pages/Admin/HomeAdmin/HomeAdmin';
+import HomeSeller from './pages/Seller/HomeSeller/HomeSeller';
+import ProductDetailAdmin from './pages/Admin/ProductDetailAdmin/ProductDetailAdmin';
 
 function App() {
   return (
@@ -20,6 +23,9 @@ function App() {
         <Route path="/checkout" element={<Checkout />} />
         <Route path="/myorder" element={<MyOrder />} />
         <Route path="/profile" element={<Profile />} />
+        <Route path="/admin" element={<HomeAdmin />} />
+        <Route path="/admin" element={<ProductDetailAdmin />} />
+        <Route path="/product/:id/admin" element={<ProductDetailAdmin />} />
       </Routes>
     </Router>
   );
